@@ -16,3 +16,10 @@ export interface ProductAIComparison {
   recommendation: string;
   model_used: string;
 }
+
+export interface AIChatResponse {
+  answer: string;
+  is_grounded: boolean;
+  model_used: string;
+}
+

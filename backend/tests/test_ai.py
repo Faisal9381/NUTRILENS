@@ -1,9 +1,13 @@
 import pytest
+from httpx import AsyncClient, ASGITransport
+from app.main import app
 from app.services.gemini_service import GeminiAIService
 from app.schemas.ai import (
     ProductAIExplainRequest,
     ProductAIExplainResponse,
     ProductComparisonAIRequest,
+    AIChatRequest,
+    AIChatResponse,
 )
 
 
@@ -59,3 +63,60 @@ async def test_fallback_ai_comparison():
     assert "Whole Milk" in comparison.overview
     assert len(comparison.key_differences) > 0
     assert "scores higher" in comparison.recommendation
+
+
+@pytest.mark.anyio
+async def test_ai_chat_fallback():
+    req = AIChatRequest(
+        product_name="Masala Oats",
+        brand="Saffola",
+        ingredients_text="Whole oats, spices, salt, palm oil",
+        nutrients_per_100g={"sugars": 2.0, "fiber": 7.5},
+        score=4.0,
+        grade="A",
+        question="Is this good for daily breakfast?"
+    )
+    ans = await GeminiAIService.chat_answer(req)
+    assert ans is not None
+    assert isinstance(ans, AIChatResponse)
+    assert "Masala Oats" in ans.answer
+
+
+@pytest.mark.anyio
+async def test_ai_explain_api_endpoint():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        payload = {
+            "product_name": "Digestive Biscuits",
+            "brand": "Britannia",
+            "categories": "Snacks",
+            "ingredients_text": "Wheat flour, palm oil, sugar, INS 500",
+            "nutrients_per_100g": {
+                "energy_kcal": 450.0,
+                "sugars": 18.0,
+                "saturated_fat": 8.0,
+                "proteins": 6.0
+            },
+            "score": 2.5,
+            "grade": "C"
+        }
+        res = await ac.post("/api/v1/ai/explain", json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert "summary" in data
+        assert "key_strengths" in data
+        assert "areas_of_concern" in data
+        assert "consumer_takeaway" in data
+
+
+@pytest.mark.anyio
+async def test_ai_chat_api_endpoint():
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+        payload = {
+            "product_name": "Fruit Juice",
+            "question": "Does this contain added sugar?"
+        }
+        res = await ac.post("/api/v1/ai/chat", json=payload)
+        assert res.status_code == 200
+        data = res.json()
+        assert "answer" in data
+

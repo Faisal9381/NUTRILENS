@@ -1,15 +1,30 @@
+/**
+ * NutriLens — Tab Bar Layout
+ *
+ * Dark-themed bottom tab bar to match the dark Home screen design.
+ * Active tab highlighted with mint-green accent color.
+ */
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Text, View, StyleSheet } from 'react-native';
-import { Colors } from '../../src/constants/theme';
+import { View, Text, StyleSheet, Platform } from 'react-native';
 
-function TabIcon({ label, focused }: { label: string; focused: boolean }) {
-  // Clean minimal icon indicator for navigation tabs
+const C = {
+  bg:       '#0F1C13',
+  border:   '#1E3326',
+  active:   '#2ECC71',
+  inactive: '#3D6650',
+};
+
+function TabIcon({
+  emoji,
+  focused,
+}: {
+  emoji: string;
+  focused: boolean;
+}) {
   return (
-    <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
-      <Text style={[styles.iconText, focused && styles.iconTextFocused]}>
-        {label}
-      </Text>
+    <View style={[styles.iconWrap, focused && styles.iconWrapFocused]}>
+      <Text style={styles.emoji}>{emoji}</Text>
     </View>
   );
 }
@@ -19,17 +34,18 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: Colors.primary,
-        tabBarInactiveTintColor: Colors.textMuted,
+        tabBarActiveTintColor: C.active,
+        tabBarInactiveTintColor: C.inactive,
         tabBarStyle: {
-          backgroundColor: Colors.surface,
-          borderTopColor: Colors.cardBorder,
-          height: 64,
-          paddingBottom: 10,
+          backgroundColor: C.bg,
+          borderTopColor: C.border,
+          borderTopWidth: 1,
+          height: Platform.OS === 'ios' ? 80 : 68,
+          paddingBottom: Platform.OS === 'ios' ? 24 : 10,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: '600',
         },
       }}
@@ -38,21 +54,21 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => <TabIcon label="🏠" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🏠" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="scanner"
         options={{
           title: 'Scan',
-          tabBarIcon: ({ focused }) => <TabIcon label="📷" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📷" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ focused }) => <TabIcon label="👤" focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} />,
         }}
       />
     </Tabs>
@@ -60,20 +76,17 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+  iconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  iconContainerFocused: {
-    backgroundColor: Colors.primaryLight,
+  iconWrapFocused: {
+    backgroundColor: 'rgba(46, 204, 113, 0.15)',
   },
-  iconText: {
-    fontSize: 18,
-  },
-  iconTextFocused: {
-    fontSize: 18,
+  emoji: {
+    fontSize: 20,
   },
 });

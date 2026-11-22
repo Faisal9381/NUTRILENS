@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.core.config import settings
-from app.routers import health, products, nutrition, ai
+from app.routers import health, products, nutrition, ai, auth, scan_history
 from app.database.session import engine, Base
 import logging
 
@@ -46,6 +46,8 @@ app.include_router(health.router, prefix=settings.API_V1_PREFIX)
 app.include_router(products.router, prefix=settings.API_V1_PREFIX)
 app.include_router(nutrition.router, prefix=settings.API_V1_PREFIX)
 app.include_router(ai.router, prefix=settings.API_V1_PREFIX)
+app.include_router(auth.router, prefix=settings.API_V1_PREFIX)
+app.include_router(scan_history.router, prefix=settings.API_V1_PREFIX)
 
 
 @app.on_event("startup")

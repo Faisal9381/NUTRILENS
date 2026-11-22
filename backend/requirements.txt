@@ -11,3 +11,6 @@ pillow>=11.0.0
 python-multipart>=0.0.18
 rapidfuzz>=3.10.0
 google-genai>=1.0.0
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.1.0
+

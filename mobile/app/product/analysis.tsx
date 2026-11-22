@@ -296,6 +296,20 @@ export default function ProductAnalysisScreen() {
               <Text style={styles.takeawayText}>{aiData.consumer_takeaway}</Text>
             </View>
 
+            {/* Interactive AI Chat CTA */}
+            <TouchableOpacity
+              style={styles.aiChatCtaButton}
+              onPress={() =>
+                router.push({
+                  pathname: '/ai-chat',
+                  params: { productJson: JSON.stringify(product) },
+                })
+              }
+              activeOpacity={0.85}
+            >
+              <Text style={styles.aiChatCtaText}>💬 Ask AI Assistant about this product</Text>
+            </TouchableOpacity>
+
             <Text style={styles.aiModelLabel}>Engine: {aiData.model_used}</Text>
           </View>
         ) : null}
@@ -717,6 +731,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
     lineHeight: 17,
+  },
+  aiChatCtaButton: {
+    backgroundColor: Colors.primary,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aiChatCtaText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 13,
   },
   aiModelLabel: {
     fontSize: 10,

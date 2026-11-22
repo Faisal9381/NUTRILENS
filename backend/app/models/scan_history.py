@@ -15,8 +15,11 @@ class ScanHistory(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
+    # Authenticated user (nullable for legacy device-based scans)
+    user_id = Column(Integer, nullable=True, index=True)
+
     # Anonymous device identifier (replaced by user_id when auth is added)
-    device_id = Column(String(128), nullable=False, index=True)
+    device_id = Column(String(128), nullable=True, index=True)
 
     # Core product reference
     barcode = Column(String(64), nullable=False)

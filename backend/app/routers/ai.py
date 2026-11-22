@@ -4,6 +4,8 @@ from app.schemas.ai import (
     ProductAIExplainResponse,
     ProductComparisonAIRequest,
     ProductComparisonAIResponse,
+    AIChatRequest,
+    AIChatResponse,
 )
 from app.services.gemini_service import GeminiAIService
 
@@ -23,6 +25,19 @@ async def explain_product_nutrition(payload: ProductAIExplainRequest):
         )
 
     return await GeminiAIService.explain_product(payload)
+
+
+@router.post("/chat", response_model=AIChatResponse)
+async def chat_product_nutrition(payload: AIChatRequest):
+    """
+    Ask a grounded nutritional question regarding a specific product.
+    """
+    if not payload.product_name or not payload.question:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="product_name and question are required."
+        )
+    return await GeminiAIService.chat_answer(payload)
 
 
 @router.post("/compare", response_model=ProductComparisonAIResponse)

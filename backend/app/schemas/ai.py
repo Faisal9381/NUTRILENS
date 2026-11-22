@@ -36,3 +36,21 @@ class ProductComparisonAIResponse(BaseModel):
     key_differences: List[str]
     recommendation: str
     model_used: str
+
+
+class AIChatRequest(BaseModel):
+    product_name: str
+    brand: Optional[str] = None
+    categories: Optional[str] = None
+    ingredients_text: Optional[str] = None
+    allergens_text: Optional[str] = None
+    nutrients_per_100g: Dict[str, Optional[float]] = {}
+    score: Optional[float] = None
+    grade: Optional[str] = None
+    question: str
+    history: Optional[List[Dict[str, str]]] = None
+
+class AIChatResponse(BaseModel):
+    answer: str
+    is_grounded: bool = True
+    model_used: str
