@@ -1,3 +1,4 @@
+from sqlalchemy.engine import make_url
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from app.core.config import settings
@@ -28,24 +29,24 @@ def get_db():
 
 
 def check_database_connection() -> dict:
-    """
-    Safely tests whether PostgreSQL is reachable.
-    Returns status: 'connected' or 'disconnected' with details.
-    Does NOT falsely report connected if the database is unreachable.
-    """
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))
+
+        db_url = make_url(settings.sync_database_url)
+
         return {
             "status": "connected",
-            "host": f"{settings.DB_HOST}:{settings.DB_PORT}",
-            "database": settings.DB_NAME,
+            "host": db_url.host,
+            "database": db_url.database,
         }
+
     except Exception as exc:
         logger.warning(f"Database connection check failed: {exc}")
+
         return {
             "status": "disconnected",
-            "host": f"{settings.DB_HOST}:{settings.DB_PORT}",
-            "database": settings.DB_NAME,
+            "host": "unknown",
+            "database": "unknown",
             "error": "Database server unreachable or credentials invalid"
         }
